@@ -10,18 +10,21 @@ const mockedTranslations = {
 }
 
 function translate(text: string) {
-    const translatedText = mockedTranslations[text]
+    let translatedText = mockedTranslations[text]
     if (translatedText === undefined) {
-        throw new Error('Oops')
+        console.warn('Skipping unmocked translations')
+        translatedText = text
     }
-    return {
-        translations: [
-            {
-                detectedSourceLanguage: 'en',
-                translatedText,
-            },
-        ],
-    }
+    return [
+        {
+            translations: [
+                {
+                    detectedSourceLanguage: 'en',
+                    translatedText,
+                },
+            ],
+        },
+    ]
 }
 
 export function mockTranslation() {
