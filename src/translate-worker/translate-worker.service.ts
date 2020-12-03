@@ -11,8 +11,8 @@ export class TranslateWorkerService {
         private translator: TranslatorService,
     ) {}
 
-    async process({ filmId, quoteId, text }: TranslateReq) {
-        const translated = await this.translator.translate(text, 'en', 'fr')
+    async process({ filmId, quoteId, quote }: TranslateReq) {
+        const translated = await this.translator.translate(quote, 'en', 'fr')
 
         await this.fireStore.db
             .collection(FS_FILMS_COL)
