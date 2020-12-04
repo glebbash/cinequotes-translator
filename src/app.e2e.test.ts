@@ -8,22 +8,26 @@ import {
     FS_QUOTES_COL,
     PUBSUB_SUBSCRIPTION,
 } from './common/constants'
-import { mockTranslation } from './common/mock-translation'
+// import { mockTranslation, translate } from './common/mock-translation'
 import { FirestoreService } from './firestore/firestore.service'
 import { Test } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import { GCloudPubSubServer } from '@ecobee/nodejs-gcloud-pubsub-module/dist/microservice'
 import { TranslateWorkerService } from './translate-worker/translate-worker.service'
 import { setupPubSub } from './common/setup-pub-sub'
+import fetch from 'node-fetch'
 
 describe('translate-worker', () => {
     let app: INestApplication
 
     beforeEach(async () => {
+        await clearDb()
+
         const testModule = await Test.createTestingModule({
             imports: [AppModule],
         }).compile()
         app = testModule.createNestApplication()
+
         const pubsub = new GCloudPubSubServer({
             authOptions: {
                 projectId: 'dummy',
@@ -34,15 +38,18 @@ describe('translate-worker', () => {
         app.connectMicroservice({
             strategy: pubsub,
         })
+
         await app.startAllMicroservicesAsync()
         await app.init()
         await setupPubSub(pubsub.client as any)
-        mockTranslation()
-        await clearDb()
     })
 
     afterEach(async () => {
         await app.close()
+    })
+
+    it('works', () => {
+        expect(1).toBe(1)
     })
 
     describe('Firestore', () => {
@@ -81,7 +88,8 @@ describe('translate-worker', () => {
             quote: 'May the force be with you.',
         })
 
-        const updatedQuote = await quoteRef.get()
+        const updatedQuoteRef = await quoteRef.get()
+        const updatedQuote = updatedQuoteRef.data()
 
         expect(updatedQuote).toEqual({
             actor: 'Harrison Ford',
