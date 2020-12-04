@@ -1,11 +1,13 @@
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8505'
 process.env.PUBSUB_EMULATOR_HOST = 'localhost:8085'
+process.env.FIRESTORE_PROJECT_ID = 'dummy-prod'
 
 import { GCloudPubSubServer } from '@ecobee/nodejs-gcloud-pubsub-module/dist/microservice/gcloud-pub-sub.server'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { PUBSUB_SUBSCRIPTION } from './common/constants'
 import { mockTranslation } from './common/mock-translation'
+import { setupPubSub } from './common/setup-pub-sub'
 
 async function bootstrap() {
     // uncomment to use real cloud translation
@@ -13,16 +15,19 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule)
 
+    const pubsub = new GCloudPubSubServer({
+        authOptions: {
+            projectId: 'dummy',
+            uri: process.env.PUBSUB_EMULATOR_HOST,
+        },
+        subscriptionIds: [PUBSUB_SUBSCRIPTION],
+    })
+
     app.connectMicroservice({
-        strategy: new GCloudPubSubServer({
-            authOptions: {
-                projectId: 'dummy',
-                uri: process.env.PUBSUB_EMULATOR_HOST,
-            },
-            subscriptionIds: [PUBSUB_SUBSCRIPTION],
-        }),
+        strategy: pubsub,
     })
 
     await app.startAllMicroservicesAsync()
+    await setupPubSub(pubsub.client as any)
 }
 bootstrap()

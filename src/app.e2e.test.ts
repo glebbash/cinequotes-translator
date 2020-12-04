@@ -14,6 +14,7 @@ import { Test } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import { GCloudPubSubServer } from '@ecobee/nodejs-gcloud-pubsub-module/dist/microservice'
 import { TranslateWorkerService } from './translate-worker/translate-worker.service'
+import { setupPubSub } from './common/setup-pub-sub'
 
 describe('translate-worker', () => {
     let app: INestApplication
@@ -23,17 +24,19 @@ describe('translate-worker', () => {
             imports: [AppModule],
         }).compile()
         app = testModule.createNestApplication()
+        const pubsub = new GCloudPubSubServer({
+            authOptions: {
+                projectId: 'dummy',
+                uri: process.env.PUBSUB_EMULATOR_HOST,
+            },
+            subscriptionIds: [PUBSUB_SUBSCRIPTION],
+        })
         app.connectMicroservice({
-            strategy: new GCloudPubSubServer({
-                authOptions: {
-                    projectId: 'dummy',
-                    uri: process.env.PUBSUB_EMULATOR_HOST,
-                },
-                subscriptionIds: [PUBSUB_SUBSCRIPTION],
-            }),
+            strategy: pubsub,
         })
         await app.startAllMicroservicesAsync()
         await app.init()
+        await setupPubSub(pubsub.client as any)
         mockTranslation()
         await clearDb()
     })
