@@ -29,6 +29,6 @@ function translate(text: string) {
 
 export function mockTranslation() {
     TranslationServiceClient.prototype.translateText = async ({ contents }) => {
-        return translate(contents) as any
+        return translate(contents[0]) as any
     }
 }
