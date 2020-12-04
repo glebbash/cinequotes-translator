@@ -1,3 +1,6 @@
+process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8505'
+process.env.PUBSUB_EMULATOR_HOST = 'localhost:8085'
+
 import { GCloudPubSubServer } from '@ecobee/nodejs-gcloud-pubsub-module/dist/microservice/gcloud-pub-sub.server'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
