@@ -1,12 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { TranslationServiceClient } from '@google-cloud/translate'
 
 @Injectable()
 export class TranslatorService {
-    constructor(
-        @Inject('TRANSLATOR_CLIENT')
-        private translator: TranslationServiceClient,
-    ) {}
+    constructor(private translator: TranslationServiceClient) {}
 
     async translate(text: string, from: string, to: string): Promise<string> {
         const [res] = await this.translator.translateText({

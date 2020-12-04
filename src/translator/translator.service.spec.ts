@@ -12,8 +12,8 @@ describe('TranslatorService', () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 {
-                    provide: 'TRANSLATOR_CLIENT',
-                    useClass: TranslationServiceClient,
+                    provide: TranslationServiceClient,
+                    useValue: new TranslationServiceClient(),
                 },
                 TranslatorService,
             ],

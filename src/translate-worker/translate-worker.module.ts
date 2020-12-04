@@ -5,7 +5,7 @@ import { TranslateWorkerController } from './translate-worker.controller'
 import { TranslateWorkerService } from './translate-worker.service'
 
 @Module({
-    imports: [FirestoreModule, TranslatorModule.forRoot()],
+    imports: [FirestoreModule, TranslatorModule],
     controllers: [TranslateWorkerController],
     providers: [TranslateWorkerService],
 })
