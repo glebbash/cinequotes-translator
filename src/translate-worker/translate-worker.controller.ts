@@ -12,7 +12,11 @@ export class TranslateWorkerController {
     async translateQuote(message: Message) {
         const { data } = message
         const messageData = JSON.parse(data.toString())
-        await this.worker.process(messageData)
+        try {
+            await this.worker.process(messageData)
+        } catch (e) {
+            console.warn(e)
+        }
         message.ack()
     }
 }
