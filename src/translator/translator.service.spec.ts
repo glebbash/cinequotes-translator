@@ -1,3 +1,4 @@
+import { MockedTranslator } from '@/common/mock-translation'
 import { TranslationServiceClient } from '@google-cloud/translate'
 import { Test, TestingModule } from '@nestjs/testing'
 import { TranslatorService } from './translator.service'
@@ -13,14 +14,14 @@ describe('TranslatorService', () => {
             providers: [
                 {
                     provide: TranslationServiceClient,
-                    useValue: new TranslationServiceClient(),
+                    useValue: new MockedTranslator(),
                 },
                 TranslatorService,
             ],
         }).compile()
 
         service = module.get(TranslatorService)
-        googleTranslator = module.get('TRANSLATOR_CLIENT')
+        googleTranslator = module.get(TranslationServiceClient)
     })
 
     it(`calls google translate api with correct params

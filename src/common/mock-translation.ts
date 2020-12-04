@@ -1,5 +1,3 @@
-import { TranslationServiceClient } from '@google-cloud/translate'
-
 const mockedTranslations = {
     'Say hello to my little friend.': 'Dis bonjour à mon petit ami.',
     "Toto, I've got a feeling we're not in Kansas anymore.":
@@ -27,8 +25,8 @@ function translate(text: string) {
     ]
 }
 
-export function mockTranslation() {
-    TranslationServiceClient.prototype.translateText = async ({ contents }) => {
+export class MockedTranslator {
+    translateText({ contents }) {
         return translate(contents[0]) as any
     }
 }

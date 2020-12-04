@@ -6,13 +6,9 @@ import { GCloudPubSubServer } from '@ecobee/nodejs-gcloud-pubsub-module/dist/mic
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { PUBSUB_SUBSCRIPTION } from './common/constants'
-import { mockTranslation } from './common/mock-translation'
 import { setupPubSub } from './common/setup-pub-sub'
 
 async function bootstrap() {
-    // uncomment to use real cloud translation
-    mockTranslation()
-
     const app = await NestFactory.create(AppModule)
 
     const pubsub = new GCloudPubSubServer({
